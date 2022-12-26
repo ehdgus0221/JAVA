@@ -1,0 +1,34 @@
+package ch03.sec01;
+// 부호 , 증감 연산자 두번째 예제
+public class IncreaseDecreaseOperatorExample {
+	public static void main(String[] args) {
+		int x = 10;
+		int y = 10;
+		int z;
+		
+		x++;
+		++x;
+		System.out.println("x=" + x);		
+
+		System.out.println("-----------------------");		
+		y--;
+		--y;
+		System.out.println("y=" + y);		
+
+		System.out.println("-----------------------");		
+		z = x++;
+		System.out.println("z=" + z);
+		System.out.println("x=" + x);
+		
+		System.out.println("-----------------------");		
+		z = ++x;
+		System.out.println("z=" + z);
+		System.out.println("x=" + x);
+		
+		System.out.println("-----------------------");				
+		z = ++x + y++;
+		System.out.println("z=" + z);
+		System.out.println("x=" + x);
+		System.out.println("y=" + y);
+	}
+}
