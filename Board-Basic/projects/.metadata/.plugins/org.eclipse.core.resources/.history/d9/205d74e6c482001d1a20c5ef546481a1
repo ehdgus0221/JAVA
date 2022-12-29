@@ -1,0 +1,21 @@
+<!-- 가장 많이 쓰이는 인코딩 UTF-8로 바꾸기, 한글,영어 둘다 지원 -->
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import="user.UserDAO" %> 
+<!-- 자바 스크립트 문장을 사용하기 위해 사용, 선언할 때 대소문자 잘못쓰면 선언오류 -->
+<%@ page import="java.io.PrintWriter" %> 
+<!-- 건너오는 데이터를 UTF-8 로 받아온다 -->
+<% request.setCharacterEncoding("UTF-8"); %>
+<jsp:useBean id="user" class="user.User" scope="page" />
+<jsp:setProperty name="user" property="userID" />
+<jsp:setProperty name="user" property="userPassword" />
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>JSP 게시판 웹 사이트</title>
+</head>
+<body>
+	
+</body>
+</html>

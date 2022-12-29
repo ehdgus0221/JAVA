@@ -1,0 +1,41 @@
+package user;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+public class UserDAO {
+
+//	Connection = DB에 접근하기 위한 객체
+	private Connection conn;
+	// SQL Injection을 방지하기 위해 사용
+	private PreparedStatement pstmt;
+	private ResultSet rs;
+	
+	public UserDAO() {
+		try {
+			String dbURL = "jdbc:mysql://localhost:3306/BBS";
+			String dbID = "root";
+			String dbPassword = "4(eldpTmdkf)!";
+			Class.forName("com.mysql.jdbc.Driver");
+			conn=DriverManager.getConnection(dbURL, dbID, dbPassword);
+		} catch (Exception e) {
+// 오류가 발생했을때 내용을 보기 위해 사용			
+			e.printStackTrace();
+		}
+	}
+	
+	public int login(String userID, String userPassword) {
+		String SQL = "SELECT userPassword FROM USER WHERE userID = ?";
+		try {
+			// SQL문을 DB에 삽입하는 형식으로 인스턴스를 가져온다.
+			pstmt = conn.prepareStatement(SQL);
+			// 가장 중요한부분
+			pstmt.setString(1, userID);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return -2; // -2는 데이터베이스 오류를 뜻한다.
+	}
+}

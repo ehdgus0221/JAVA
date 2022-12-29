@@ -1,0 +1,109 @@
+package bbs;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+
+public class BbsDAO {
+
+//	Connection = DB에 접근하기 위한 객체
+	private Connection conn;
+	private ResultSet rs;
+	
+	public BbsDAO() {
+		try {
+			String dbURL = "jdbc:mysql://localhost:3306/BBS";
+			String dbID = "root";
+			String dbPassword = "4(eldpTmdkf)!";
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			conn=DriverManager.getConnection(dbURL, dbID, dbPassword);
+		} catch (Exception e) {
+// 오류가 발생했을때 내용을 보기 위해 사용			
+			e.printStackTrace();
+		}
+	}
+	// 게시판 글을 쓸때 현재 시간을 가져온다.
+	public String getDate() {
+		String SQL = "SELECT NOW()";
+		try {
+			// SQL Injection을 방지하기 위해 사용
+			PreparedStatement pstmt = conn.prepareStatement(SQL);
+			rs=pstmt.executeQuery();
+			if(rs.next()) {
+				return rs.getString(1);
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		//DB 오류
+		return ""; 
+	}
+	
+	public int getNext() {
+		String SQL = "SELECT bbsID FROM BBS ORDER BY bbsID DESC";
+		try {
+			// SQL Injection을 방지하기 위해 사용
+			PreparedStatement pstmt = conn.prepareStatement(SQL);
+			rs=pstmt.executeQuery();
+			if(rs.next()) {
+				return rs.getInt(1)+1;
+			}
+			// 첫번째 게시물인 경우
+			return 1;
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		//DB 오류
+		return -1; 
+	}
+	
+	public int write(String bbsTitle, String userID, String bbsContent) {
+		String SQL = "INSERT INTO BBS VALUES (?, ?, ?, ?, ?, ?)";
+		try {
+			// SQL Injection을 방지하기 위해 사용
+			PreparedStatement pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1,  getNext());
+			pstmt.setString(2,  bbsTitle);
+			pstmt.setString(3,  userID);
+			pstmt.setString(4,  getDate());
+			pstmt.setString(5,  bbsContent);
+			// availble 이고 글이 보여야하므로 1을 넣어준다.
+			pstmt.setInt(6,  1);
+			return pstmt.executeUpdate();		
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		//DB 오류
+		return -1; 
+	}
+	
+	public ArrayList<Bbs> getList(int pageNumber){
+		String SQL = "SELECT * FROM BBS WHERE bbsID < ? AND bbsAvailble=1 ORDER BY bbsID DESC LIMIT 10";
+		ArrayList<Bbs> list = new ArrayList<Bbs>();
+		try {
+			// SQL Injection을 방지하기 위해 사용
+			PreparedStatement pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1,  getNext() - (pageNumber - 1) * 10);
+			rs=pstmt.executeQuery();
+			//결과가 나올때마다 실행
+			while(rs.next()) {
+				Bbs bbs = new Bbs();
+				bbs.setBbsID(rs.getInt(1));
+				bbs.setBbsTitle(rs.getString(2));
+				bbs.setUserID(rs.getString(3));
+				bbs.setBbsDate(rs.getString(4));
+				bbs.setBbsContent(rs.getString(5));
+				bbs.setBbsAvailable(rs.getInt(6));
+				list.add(bbs);
+			}
+	
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		//DB 오류
+		return list; 
+	}
+	
+}
