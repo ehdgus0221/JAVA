@@ -123,4 +123,59 @@ public class BbsDAO {
 		return false; 
 	}
 	
+	public Bbs getBbs(int bbsID) {
+		String SQL = "SELECT * FROM BBS WHERE bbsID = ?";
+		try {
+			// SQL Injection을 방지하기 위해 사용
+			PreparedStatement pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1, bbsID);
+			rs=pstmt.executeQuery();
+			if(rs.next()) {
+				Bbs bbs = new Bbs();
+				bbs.setBbsID(rs.getInt(1));
+				bbs.setBbsTitle(rs.getString(2));
+				bbs.setUserID(rs.getString(3));
+				bbs.setBbsDate(rs.getString(4));
+				bbs.setBbsContent(rs.getString(5));
+				bbs.setBbsAvailable(rs.getInt(6));
+				return bbs;
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null; 
+	}
+	
+	public int update(int bbsID, String bbsTitle, String bbsContent) {
+		String SQL = "UPDATE BBS SET bbsTitle = ?, bbsContent = ? WHERE bbsID = ?";
+		try {
+			// SQL Injection을 방지하기 위해 사용
+			PreparedStatement pstmt = conn.prepareStatement(SQL);
+			pstmt.setString(1, bbsTitle);
+			pstmt.setString(2, bbsContent);
+			pstmt.setInt(3, bbsID);
+			// available 이고 글이 보여야하므로 1을 넣어준다.
+			return pstmt.executeUpdate();		
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		//DB 오류
+		return -1; 
+	}
+	
+	public int delete(int bbsID) {
+		String SQL = "UPDATE BBS SET bbsAvailable=0 WHERE bbsID = ?";
+		try {
+			// SQL Injection을 방지하기 위해 사용
+			PreparedStatement pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1, bbsID);
+			// available 이고 글이 보여야하므로 1을 넣어준다.
+			return pstmt.executeUpdate();		
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		//DB 오류
+		return -1; 
+	}
 }
